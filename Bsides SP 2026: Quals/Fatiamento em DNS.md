@@ -7,11 +7,13 @@ Analise o tráfego DNS, identifique as consultas legítimas e encontre a flag!
 
 #### [Baixar Desafio](https://github.com/user-attachments/files/27715487/files0.zip)
 
-## Analisando o arquivo
+## 1) Analisando o arquivo
 
 Após baixar e extrair o arquivo `.pcap`, usei o comando `strings` para procurar textos legíveis dentro da captura:
 
-```strings dns-tunnel-pieces.pcap```
+```bash
+strings dns-tunnel-pieces.pcap
+```
 
 <img width="627" height="463" alt="image" src="https://github.com/user-attachments/assets/ec09ead2-ca25-472a-bc0d-ccafd0a5f73e" />
 
@@ -19,7 +21,7 @@ Ao observar a saída, percebi um padrão interessante: apareciam várias ocorrê
 
 Isso já é um forte indício de que os dados podem estar sendo enviados em partes por meio de consultas DNS.
 
-### Analisando no Wireshark
+### 2) Analisando no Wireshark
 
 Para investigar melhor, abri o arquivo .pcap no Wireshark.
 
@@ -41,7 +43,7 @@ c02.<pedaço>.exfil.attacker.com
 
 Os prefixos `c01`, `c02` etc. indicam a ordem correta dos pedaços.
 
-### Filtrando apenas as queries DNS
+### 3) Filtrando apenas as queries DNS
 
 Como o filtro anterior também mostrava respostas DNS, apliquei um filtro mais específico para exibir somente as consultas, ou seja, os pacotes `Standard query`:
 
@@ -51,7 +53,7 @@ Como o filtro anterior também mostrava respostas DNS, apliquei um filtro mais e
 
 Agora a visualização ficou mais limpa, mostrando apenas os domínios que continham os pedaços da informação escondida.
 
-### Extraindo os pedaços
+### 4) Extraindo os pedaços
 
 As consultas encontradas foram:
 ```
@@ -82,11 +84,13 @@ Juntando tudo na ordem indicada pelos prefixos:
 
 > SElLX2Ruc190dW5uZWxfcGllY2VzXzFhOWQ0ZTViMmM3ZjZhOGQzZTBiMWMyZDRmNWE2Yjdj
 
-### Decodificando a string
+### 5) Decodificando a string
 
 Para decodificar, usei o comando:
 
-```echo 'SElLX2Ruc190dW5uZWxfcGllY2VzXzFhOWQ0ZTViMmM3ZjZhOGQzZTBiMWMyZDRmNWE2Yjdj' | base64 -d```
+```bash
+echo 'SElLX2Ruc190dW5uZWxfcGllY2VzXzFhOWQ0ZTViMmM3ZjZhOGQzZTBiMWMyZDRmNWE2Yjdj' | base64 -d
+```
 
 <img width="643" height="81" alt="Captura de tela 2026-05-13 115432" src="https://github.com/user-attachments/assets/dc6941ec-bf92-40ee-bf31-28e57afa8a1f" />
 
